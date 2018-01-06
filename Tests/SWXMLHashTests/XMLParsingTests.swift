@@ -244,6 +244,27 @@ class XMLParsingTests: XCTestCase {
         }
         XCTAssertNotNil(err)
     }
+
+    func testShouldThrowErrorForInvalidXML() {
+        let invalidXML = "<uh oh>what is this"
+        var err: ParsingError? = nil
+        let parser = SWXMLHash.config { config in
+            config.detectParsingErrors = true
+        }.parse(invalidXML)
+
+        switch parser {
+        case .parsingError(let error):
+            err = error
+        default:
+            err = nil
+        }
+
+        XCTAssertNotNil(err)
+
+        if err != nil {
+            XCTAssert(err!.line == 1)
+        }
+    }
 }
 
 extension XMLParsingTests {
